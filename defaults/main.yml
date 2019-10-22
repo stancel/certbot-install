@@ -6,4 +6,3 @@ certbot_install_url: "https://dl.eff.org/certbot-auto"
 
 # Directory on target server to store certbot binary
 certbot_install_dir: "/opt/certbot"
-

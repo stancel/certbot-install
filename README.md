@@ -12,11 +12,13 @@ Role Variables
 --------------
 
 URL of where to download the certbot binary. The default is 'https://dl.eff.org/certbot-auto'.
+
 ```
 	certbot_install_url: "https://dl.eff.org/certbot-auto"
 ```
 
 Directory on target server to store the certbot binary. The default is '/opt/certbot'.
+
 ```
 	certbot_install_dir: "/opt/certbot"
 ```
@@ -31,22 +33,24 @@ Example Playbook
 
 Copy and edit *defaults/main.yml* to your *vars/main.yml*
 
+```
 	- hosts: your_server
 	  vars_files:
 	    - vars/main.yml
 	  roles:
 	    - stancel.certbot_install
-
+```
 
 or just pass the variables in the playbook
 
-
+```
 	- hosts: your_server 
 	  vars:
 		certbot_install_url: "https://dl.eff.org/certbot-auto"
 		certbot_install_dir: "/opt/certbot"
 	  roles:
 	    - stancel.certbot_install
+```
 
 License
 -------
@@ -57,5 +61,3 @@ Author Information
 ------------------
 
 [Brad Stancel](https://github.com/stancel) 
-
-
