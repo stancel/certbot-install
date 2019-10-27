@@ -29,4 +29,4 @@
     name: "renew letsencrypt certificates" 
     hour: "0" 
     minute: "0" 
-    job: "/bin/bash {{ certbot_install_url }}/certbot-auto renew --non-interactive --quiet --standalone --pre-hook 'service nginx stop' --post-hook 'service nginx start'"
+    job: "/bin/bash {{ certbot_install_dir }}/certbot-auto renew --non-interactive --quiet --standalone --pre-hook 'service nginx stop' --post-hook 'service nginx start'"
