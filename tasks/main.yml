@@ -1,32 +1,45 @@
 ---
 # tasks file for certbot-install
 
-- name: "Create certbot directory"
-  file: 
-    path: /opt/certbot 
-    state: directory 
-    mode: 0755 
-    owner: root 
-    group: root
+- name: "Ensure snapd is installed"
+  package:
+    name: snapd
+    state: present
+  register: snapd_install
 
-- name: "Install certbot standalone"
-  get_url:
-    url: "{{ certbot_install_url }}"
-    dest: "{{ certbot_install_dir }}/certbot-auto"
+- name: "Ensure snapd is enabled"
+  systemd:
+    name: snapd.socket
+    enabled: true
+    state: started
 
-- name: "Ensure certbot-auto is executable"
+- name: "Enable classic snap support"
   file:
-    path: "{{ certbot_install_dir }}/certbot-auto"
-    mode: 0755
+    src: /var/lib/snapd/snap
+    dest: /snap
+    state: link
+  when: ansible_os_family != "Debian"
 
-#- name: Get initial certificate
-# command: "{{ certbot_dir }}/certbot-auto certonly --non-interactive --quiet --agree-tos --email {{ certbot_email }} --standalone --pre-hook 'service nginx stop' --post-hook 'service nginx start' -d {{ item.url }} -d www.{{ item.url }}"
-# with_items: '{{ sites_to_set_up }}'
-# when: item.https == true
+- name: "Update snap after install"
+  shell: snap install core; snap refresh core
+  changed_when: true
+  failed_when: false
+  when: snapd_install is changed
 
-- name: "Add cerbot renewal cronjob"
-  cron: 
-    name: "renew letsencrypt certificates" 
-    hour: "0" 
-    minute: "0" 
-    job: "/bin/bash {{ certbot_install_dir }}/certbot-auto renew --non-interactive --quiet --standalone --pre-hook 'service nginx stop' --post-hook 'service nginx start'"
+- name: "Install certbot via snap"
+  snap:
+    name: certbot
+    classic: true
+
+- name: "Symlink certbot into place"
+  file:
+    src: /snap/bin/certbot
+    dest: /usr/bin/certbot
+    state: link
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: "Set Certbot script variable"
+  set_fact:
+    certbot_script: /usr/bin/certbot
+
+

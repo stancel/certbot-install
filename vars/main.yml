@@ -1,2 +1,5 @@
 ---
 # vars file for certbot-install
+
+#####     Required Variables      #####
+# Fill in appropriate values below unless passing from a higher precedence
